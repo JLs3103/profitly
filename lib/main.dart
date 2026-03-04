@@ -5,6 +5,7 @@ import 'screens/home_screen.dart';
 import 'screens/transaction_screen.dart';
 import 'screens/target_screen.dart';
 import 'screens/alert_screen.dart';
+import 'screens/login_screen.dart';
 
 void main() {
   runApp(const ProfitlyApp());
@@ -34,13 +35,14 @@ class ProfitlyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: const MainScreen(),
+      home: const LoginScreen(),
     );
   }
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final Map<String, dynamic>? user;
+  const MainScreen({super.key, this.user});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -49,17 +51,17 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const TransactionScreen(),
-    const TargetScreen(),
-    const AlertScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [
+      HomeScreen(user: widget.user),
+      const TransactionScreen(),
+      const TargetScreen(),
+      const AlertScreen(),
+    ];
+
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: screens[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [

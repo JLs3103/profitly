@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final Map<String, dynamic>? user;
+  const HomeScreen({super.key, this.user});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      endDrawer: _buildEndDrawer(),
+      endDrawer: _buildEndDrawer(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Selamat Datang, Iqbal!',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              'Selamat Datang, ${user?['full_name']?.split(' ')[0] ?? 'User'}!',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             _buildMoneyHealthCard(),
@@ -59,7 +61,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEndDrawer() {
+  Widget _buildEndDrawer(BuildContext context) {
     return Drawer(
       child: Column(
         children: [
@@ -79,9 +81,9 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Iqbal Maulana',
-                        style: TextStyle(
+                      Text(
+                        user?['full_name'] ?? 'User Name',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -92,7 +94,9 @@ class HomeScreen extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            // TODO: Add logout action
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            );
                           },
                           icon: const Icon(Icons.logout, size: 16),
                           label: const Text('Log Out'),
