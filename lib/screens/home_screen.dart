@@ -7,6 +7,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
+      endDrawer: _buildEndDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -44,11 +45,111 @@ class HomeScreen extends StatelessWidget {
       ),
       centerTitle: true,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {},
+        Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+            );
+          },
         ),
       ],
+    );
+  }
+
+  Widget _buildEndDrawer() {
+    return Drawer(
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+            color: const Color(0xFF166835), // Primary dark green theme
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, size: 40, color: Colors.grey),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Iqbal Maulana',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            // TODO: Add logout action
+                          },
+                          icon: const Icon(Icons.logout, size: 16),
+                          label: const Text('Log Out'),
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.red,
+                            backgroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            elevation: 0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.person_outline),
+                  title: const Text('Profil Saya'),
+                  onTap: () {},
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.settings_outlined),
+                  title: const Text('Pengaturan'),
+                  onTap: () {},
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.help_outline),
+                  title: const Text('Bantuan'),
+                  onTap: () {},
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.privacy_tip_outlined),
+                  title: const Text('Kebijakan Privasi'),
+                  onTap: () {},
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.info_outline),
+                  title: const Text('Tentang Aplikasi'),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -76,27 +177,33 @@ class HomeScreen extends StatelessWidget {
                   size: const Size(200, 100),
                   painter: _GaugePainter(),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      '82',
-                      style: TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        height: 1.0,
-                      ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 24.0), // push it down lower
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          '82',
+                          style: TextStyle(
+                            fontSize: 48,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            height: 1.0,
+                          ),
+                        ),
+                        const Text(
+                          'Baik',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                    const Text(
-                      'Baik',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
@@ -288,31 +395,14 @@ class HomeScreen extends StatelessWidget {
 class _GaugePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
+    Offset center = Offset(size.width / 2, size.height);
+    double radius = size.height - 15;
+
     Paint trackPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 15
       ..strokeCap = StrokeCap.round;
-
-    Paint progressPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 15
-      ..strokeCap = StrokeCap.round;
-
-    Paint badPaint = Paint()
-      ..color = Colors.red
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 15
-      ..strokeCap = StrokeCap.round;
-      
-    Paint warningPaint = Paint()
-      ..color = Colors.orange
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 15;
-
-    Offset center = Offset(size.width / 2, size.height);
-    double radius = size.height - 15;
 
     // Draw background track (half circle)
     canvas.drawArc(
@@ -323,42 +413,63 @@ class _GaugePainter extends CustomPainter {
       trackPaint,
     );
 
-    // Draw the segments to look like the design: red, orange, green
-    // We can do a sweep gradient or draw arcs. Let's draw arcs for simplicity.
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      3.14159, 
-      3.14159 * 0.25, 
-      false,
-      badPaint,
-    );
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      3.14159 + (3.14159 * 0.25), 
-      3.14159 * 0.25, 
-      false,
-      warningPaint,
-    );
-    Paint greenPaint = Paint()
-      ..color = Colors.greenAccent
+    // 7 solid color blocks from left to right
+    final baseColors = [
+      Colors.green.shade900, // hijau tua
+      Colors.green.shade500, // hijau muda
+      Colors.green.shade300, // hijau lebih muda lagi
+      Colors.yellow.shade500, // kuning
+      Colors.red.shade300,   // merah lebih muda lagi
+      Colors.red.shade400,   // merah muda
+      Colors.red.shade900,   // merah tua
+    ];
+
+    List<Color> hardColors = [];
+    List<double> hardStops = [];
+    for (int i = 0; i < 7; i++) {
+      hardColors.add(baseColors[i]);
+      hardColors.add(baseColors[i]);
+      // Divide the arc into 7 equal pieces using stops
+      hardStops.add(i / 7.0);
+      hardStops.add((i + 1) / 7.0);
+    }
+
+    Paint gradientPaint = Paint()
+      ..shader = SweepGradient(
+        startAngle: 3.14159,
+        endAngle: 3.14159 * 2,
+        colors: hardColors,
+        stops: hardStops,
+      ).createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 15;
+      ..strokeWidth = 15
+      ..strokeCap = StrokeCap.round;
+
+    // Draw the partitioned colored chunks
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
-      3.14159 + (3.14159 * 0.5), 
-      3.14159 * 0.5, 
+      3.14159,
+      3.14159,
       false,
-      greenPaint,
+      gradientPaint,
     );
 
-    // Overlap the white progress
+    // Indicator at 82%
+    // Instead of a sweep that covers everything, we draw a tiny arc to act as a point/bead
+    Paint indicatorPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 20
+      ..strokeCap = StrokeCap.round;
+
+    double progressAngle = 3.14159 + (3.14159 * 0.82);
+    // Draw an indicator bead that sits exactly at 82%
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
-      3.14159, // start left
-      3.14159 * 0.82, // 82% progress
+      progressAngle - 0.015, // slightly before center
+      0.03, // Tiny sweep angle just to show a dot
       false,
-      progressPaint,
+      indicatorPaint,
     );
   }
 
