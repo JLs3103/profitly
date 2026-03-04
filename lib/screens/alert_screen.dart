@@ -50,10 +50,7 @@ class AlertScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF1D7A42),
       expandedHeight: 120.0,
       pinned: true,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-        onPressed: () {},
-      ),
+      automaticallyImplyLeading: false,
       title: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
