@@ -1,22 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 
+import 'helpers/database_helper.dart';
 import 'screens/home_screen.dart';
 import 'screens/transaction_screen.dart';
 import 'screens/target_screen.dart';
 import 'screens/alert_screen.dart';
 import 'screens/login_screen.dart';
 
-void main() {
-  runApp(const ProfitlyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+  
+  final prefs = await SharedPreferences.getInstance();
+  final savedUsername = prefs.getString('saved_username');
+  
+  Map<String, dynamic>? initialUser;
+  if (savedUsername != null) {
+    final dbHelper = DatabaseHelper();
+    initialUser = await dbHelper.getUserByUsername(savedUsername);
+  }
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [Locale('id'), Locale('en')],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('id'),
+      child: ProfitlyApp(initialUser: initialUser),
+    ),
+  );
 }
 
 class ProfitlyApp extends StatelessWidget {
-  const ProfitlyApp({super.key});
+  final Map<String, dynamic>? initialUser;
+  const ProfitlyApp({super.key, this.initialUser});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       title: 'Profitly',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -35,7 +61,7 @@ class ProfitlyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: const LoginScreen(),
+      home: initialUser != null ? MainScreen(user: initialUser) : const LoginScreen(),
     );
   }
 }
@@ -86,22 +112,22 @@ class _MainScreenState extends State<MainScreen> {
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
           elevation: 0,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled),
-              label: 'Beranda',
+              icon: const Icon(Icons.home_filled),
+              label: 'home'.tr(),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_wallet),
-              label: 'Transaksi',
+              icon: const Icon(Icons.account_balance_wallet),
+              label: 'transaction'.tr(),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.track_changes),
-              label: 'Target',
+              icon: const Icon(Icons.track_changes),
+              label: 'target'.tr(),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
-              label: 'Alert', // Has a red dot in design, will implement custom icon later if needed
+              icon: const Icon(Icons.notifications),
+              label: 'alert'.tr(), // Has a red dot in design, will implement custom icon later if needed
             ),
           ],
         ),

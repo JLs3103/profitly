@@ -1,9 +1,38 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'login_screen.dart';
+import 'profile_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final Map<String, dynamic>? user;
   const HomeScreen({super.key, this.user});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  File? _imageFile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  Future<void> _loadImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final imagePath = prefs.getString('profile_image_path');
+    if (imagePath != null) {
+      if (mounted) {
+        setState(() {
+          _imageFile = File(imagePath);
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +45,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Selamat Datang, ${user?['full_name']?.split(' ')[0] ?? 'User'}!',
+              'Selamat Datang, ${widget.user?['full_name']?.split(' ')[0] ?? 'User'}!',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -71,10 +100,13 @@ class HomeScreen extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 40, color: Colors.grey),
+                  backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
+                  child: _imageFile == null
+                      ? const Icon(Icons.person, size: 40, color: Colors.grey)
+                      : null,
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -82,7 +114,7 @@ class HomeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user?['full_name'] ?? 'User Name',
+                        widget.user?['full_name'] ?? 'User Name',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -99,7 +131,7 @@ class HomeScreen extends StatelessWidget {
                             );
                           },
                           icon: const Icon(Icons.logout, size: 16),
-                          label: const Text('Log Out'),
+                          label: Text('logout'.tr()),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.red,
                             backgroundColor: Colors.white,
@@ -122,8 +154,17 @@ class HomeScreen extends StatelessWidget {
               children: [
                 ListTile(
                   leading: const Icon(Icons.person_outline),
-                  title: const Text('Profil Saya'),
-                  onTap: () {},
+                  title: Text('profile'.tr()),
+                  onTap: () {
+                    Navigator.pop(context); // Close the drawer
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(user: widget.user),
+                      ),
+                    ).then((_) {
+                      _loadImage();
+                    });
+                  },
                 ),
                 const Divider(height: 1),
                 ListTile(
@@ -319,7 +360,7 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Target Keuangan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Text('target'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 16),
           _buildTargetRowItem(
             icon: Icons.shield_outlined,

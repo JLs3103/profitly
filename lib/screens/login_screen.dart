@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/database_helper.dart';
 
@@ -43,7 +44,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
 
     if (user != null) {
-      // Login successful, go to MainScreen
+      // Login successful, save to SharedPreferences and go to MainScreen
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('saved_username', user['username']);
+
+      if (!mounted) return;
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => MainScreen(user: user)),
       );

@@ -18,7 +18,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'profitly.db');
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -29,6 +29,9 @@ class DatabaseHelper {
       await db.execute('ALTER TABLE users ADD COLUMN full_name TEXT');
       await db.update('users', {'full_name': 'Administrator'}, where: 'username = ?', whereArgs: ['admin']);
     }
+    if (oldVersion < 3) {
+      await db.execute('ALTER TABLE users ADD COLUMN phone TEXT');
+    }
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -38,11 +41,15 @@ class DatabaseHelper {
         full_name TEXT,
         email TEXT,
         username TEXT UNIQUE,
-        password TEXT
+        password TEXT,
+        phone TEXT
       )
     ''');
+    await _seedDatabase(db);
+  }
 
-    // Pre-populate dummy account (Akun Bawaan)
+  // Pre-populate dummy account (Akun Bawaan)
+  Future<void> _seedDatabase(Database db) async {
     await db.insert('users', {
       'full_name': 'Administrator',
       'email': 'admin@profitly.com',
@@ -100,5 +107,79 @@ class DatabaseHelper {
       whereArgs: [username],
     );
     return results.isNotEmpty;
+  }
+
+  Future<Map<String, dynamic>?> getUserByUsername(String username) async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.query(
+      'users',
+      where: 'username = ?',
+      whereArgs: [username],
+    );
+
+    if (results.isNotEmpty) {
+      return results.first;
+    }
+    return null;
+  }
+
+  Future<bool> updateUserProfile(String username, String fullName, String email, String phone) async {
+    final db = await database;
+    try {
+      await db.update(
+        'users',
+        {
+          'full_name': fullName,
+          'email': email,
+          'phone': phone,
+        },
+        where: 'username = ?',
+        whereArgs: [username],
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> changePassword(String username, String oldPassword, String newPassword) async {
+    final db = await database;
+    try {
+      // First verify old password
+      final List<Map<String, dynamic>> results = await db.query(
+        'users',
+        where: 'username = ? AND password = ?',
+        whereArgs: [username, oldPassword],
+      );
+
+      if (results.isEmpty) {
+        return false; // Old password incorrect
+      }
+
+      // Update password
+      await db.update(
+        'users',
+        {'password': newPassword},
+        where: 'username = ?',
+        whereArgs: [username],
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteUser(String username) async {
+    final db = await database;
+    try {
+      int count = await db.delete(
+        'users',
+        where: 'username = ?',
+        whereArgs: [username],
+      );
+      return count > 0;
+    } catch (e) {
+      return false;
+    }
   }
 }
