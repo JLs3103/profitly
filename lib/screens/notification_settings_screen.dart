@@ -112,7 +112,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     return SwitchListTile(
       title: Text(
         title,
-        style: const TextStyle(fontWeight: FontWeight.w500),
+        style: TextStyle(fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface),
       ),
       subtitle: Text(
         subtitle,

@@ -231,10 +231,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -256,7 +256,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               borderSide: const BorderSide(color: Color(0xFF166835)),
             ),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade50,
           ),
         ),
       ],

@@ -16,6 +16,7 @@ class AlertScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildWarningCard(
+                    context: context,
                     icon: Icons.warning_amber_rounded,
                     title: 'Cashflow Diprediksi Minus\ndalam 12 Hari',
                     color: Colors.orange.shade100,
@@ -23,6 +24,7 @@ class AlertScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   _buildWarningCard(
+                    context: context,
                     icon: Icons.warning_amber_rounded,
                     title: 'Pengeluaran Bulanan Anda\nNaik 25% minggu ini',
                     color: Colors.orange.shade100,
@@ -30,12 +32,13 @@ class AlertScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   _buildWarningCardWithImage(
+                    context: context,
                     title: 'Piutang Rp 1.500.000\nTelah Jatuh Tempo!',
                     color: Colors.orange.shade100,
                     iconColor: Colors.orange,
                   ),
                   const SizedBox(height: 24),
-                  _buildInsightAI(),
+                  _buildInsightAI(context),
                 ],
               ),
             ),
@@ -103,6 +106,7 @@ class AlertScreen extends StatelessWidget {
   }
 
   Widget _buildWarningCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required Color color,
@@ -111,7 +115,7 @@ class AlertScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF8E1), // Light yellow card background
+        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF332A0F) : const Color(0xFFFFF8E1), // Light yellow card background
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.orange.shade200, width: 1),
       ),
@@ -122,7 +126,7 @@ class AlertScreen extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
         ],
@@ -131,6 +135,7 @@ class AlertScreen extends StatelessWidget {
   }
   
   Widget _buildWarningCardWithImage({
+    required BuildContext context,
     required String title,
     required Color color,
     required Color iconColor,
@@ -138,7 +143,7 @@ class AlertScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF8E1),
+        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF332A0F) : const Color(0xFFFFF8E1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.orange.shade200, width: 1),
       ),
@@ -149,7 +154,7 @@ class AlertScreen extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
           const SizedBox(width: 8),
@@ -160,11 +165,11 @@ class AlertScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInsightAI() {
+  Widget _buildInsightAI(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

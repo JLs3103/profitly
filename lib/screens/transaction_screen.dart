@@ -17,11 +17,11 @@ class TransactionScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildTabs(),
+            _buildTabs(context),
             const SizedBox(height: 16),
-            _buildChartCard(),
+            _buildChartCard(context),
             const SizedBox(height: 16),
-            _buildExpensesCard(),
+            _buildExpensesCard(context),
             const SizedBox(height: 16),
             _buildDeficitWarningCard(),
           ],
@@ -54,23 +54,25 @@ class TransactionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTabs() {
+  Widget _buildTabs(BuildContext context) {
     return Row(
       children: [
-        _buildTabItem('Mingguan', false),
-        _buildTabItem('Bulanan', true),
-        _buildTabItem('Prediksi', false),
+        _buildTabItem(context, 'Mingguan', false),
+        _buildTabItem(context, 'Bulanan', true),
+        _buildTabItem(context, 'Prediksi', false),
       ],
     );
   }
 
-  Widget _buildTabItem(String title, bool isSelected) {
+  Widget _buildTabItem(BuildContext context, String title, bool isSelected) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.grey.shade200,
+          color: isSelected 
+              ? Theme.of(context).cardColor 
+              : (Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade200),
           borderRadius: BorderRadius.circular(8),
           boxShadow: isSelected
               ? [BoxShadow(color: Colors.black12, blurRadius: 4, offset: const Offset(0, 2))]
@@ -87,11 +89,11 @@ class TransactionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChartCard() {
+  Widget _buildChartCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -129,11 +131,11 @@ class TransactionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildExpensesCard() {
+  Widget _buildExpensesCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

@@ -89,9 +89,9 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Tidak ada aplikasi email yang terdeteksi. Silakan hubungi kami langsung di:',
-                  style: TextStyle(fontSize: 13, color: Colors.black87),
+                  style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface),
                 ),
                 const SizedBox(height: 12),
                 SelectableText(
@@ -366,10 +366,10 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
               const SizedBox(height: 2),
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -438,10 +438,10 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
         const SizedBox(width: 10),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],
@@ -515,7 +515,7 @@ class _FaqTileState extends State<_FaqTile> with SingleTickerProviderStateMixin 
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
-                      color: _expanded ? widget.primaryColor : Colors.black87,
+                      color: _expanded ? widget.primaryColor : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),

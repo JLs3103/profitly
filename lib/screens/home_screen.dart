@@ -4,6 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'login_screen.dart';
 import 'profile_screen.dart';
+import 'settings_screen.dart';
+import 'help_support_screen.dart';
+import 'privacy_policy_screen.dart';
+import 'about_app_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Map<String, dynamic>? user;
@@ -45,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Selamat Datang, ${widget.user?['full_name']?.split(' ')[0] ?? 'User'}!',
+              '${'welcome'.tr()}, ${widget.user?['full_name']?.split(' ')[0] ?? 'User'}!',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -169,26 +173,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.settings_outlined),
-                  title: const Text('Pengaturan'),
-                  onTap: () {},
+                  title: Text('settings'.tr()),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => SettingsScreen(user: widget.user),
+                      ),
+                    );
+                  },
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.help_outline),
-                  title: const Text('Bantuan'),
-                  onTap: () {},
+                  title: Text('help'.tr()),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const HelpSupportScreen(),
+                      ),
+                    );
+                  },
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.privacy_tip_outlined),
-                  title: const Text('Kebijakan Privasi'),
-                  onTap: () {},
+                  title: Text('privacy_policy'.tr()),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicyScreen(),
+                      ),
+                    );
+                  },
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.info_outline),
-                  title: const Text('Tentang Aplikasi'),
-                  onTap: () {},
+                  title: Text('about_app'.tr()),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const AboutAppScreen(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -238,9 +270,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 1.0,
                           ),
                         ),
-                        const Text(
-                          'Baik',
-                          style: TextStyle(
+                        Text(
+                          'good'.tr(),
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.white,
                             fontWeight: FontWeight.w500,
@@ -254,9 +286,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Money Health Score',
-            style: TextStyle(color: Colors.white70),
+          Text(
+            'money_health_score'.tr(),
+            style: const TextStyle(color: Colors.white70),
           ),
           const SizedBox(height: 16),
           // Balances
@@ -275,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Saldo Saat Ini', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                      Text('current_balance'.tr(), style: const TextStyle(color: Colors.white70, fontSize: 12)),
                       const Text(
                         'Rp 12.500.000',
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
@@ -307,7 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -323,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Cash Flow', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text('cash_flow'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               Icon(Icons.bar_chart, color: Colors.green.shade700),
             ],
           ),
@@ -347,7 +379,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -364,7 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 16),
           _buildTargetRowItem(
             icon: Icons.shield_outlined,
-            title: 'Dana Darurat',
+            title: 'emergency_fund'.tr(),
             current: 'Rp 6.000.000',
             target: '8.000.000',
             progress: 0.75,
@@ -373,7 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 16),
           _buildTargetRowItem(
             icon: Icons.business_center_outlined,
-            title: 'Modal Usaha',
+            title: 'business_capital'.tr(),
             current: 'Rp 4.000.000',
             target: '10.000.000',
             progress: 0.4,
@@ -424,7 +456,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 8),
               LinearProgressIndicator(
                 value: progress,
-                backgroundColor: Colors.grey.shade200,
+                backgroundColor: Colors.grey.withValues(alpha: 0.2),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 minHeight: 6,
                 borderRadius: BorderRadius.circular(3),

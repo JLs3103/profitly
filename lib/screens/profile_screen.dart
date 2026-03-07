@@ -265,7 +265,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title,
         style: TextStyle(
           fontWeight: FontWeight.w500,
-          color: textColor ?? Colors.black87,
+          color: textColor ?? Theme.of(context).colorScheme.onSurface,
         ),
       ),
       trailing: trailingText != null

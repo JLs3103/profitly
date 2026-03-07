@@ -68,10 +68,10 @@ class _TargetScreenState extends State<TargetScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFF1D7A42), 
+            colorScheme: ColorScheme.light(
+              primary: const Color(0xFF1D7A42), 
               onPrimary: Colors.white, 
-              onSurface: Colors.black, 
+              onSurface: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           child: child!,
@@ -91,7 +91,7 @@ class _TargetScreenState extends State<TargetScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -296,7 +296,7 @@ class _TargetScreenState extends State<TargetScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

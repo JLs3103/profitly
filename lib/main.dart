@@ -10,13 +10,20 @@ import 'screens/target_screen.dart';
 import 'screens/alert_screen.dart';
 import 'screens/login_screen.dart';
 
+/// Global notifier – can be listened from anywhere in the app.
+final ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier(ThemeMode.light);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  
+
   final prefs = await SharedPreferences.getInstance();
   final savedUsername = prefs.getString('saved_username');
-  
+
+  // Restore saved dark-mode preference
+  final isDark = prefs.getBool('dark_mode') ?? false;
+  themeModeNotifier.value = isDark ? ThemeMode.dark : ThemeMode.light;
+
   Map<String, dynamic>? initialUser;
   if (savedUsername != null) {
     final dbHelper = DatabaseHelper();
@@ -33,9 +40,59 @@ void main() async {
   );
 }
 
-class ProfitlyApp extends StatelessWidget {
+class ProfitlyApp extends StatefulWidget {
   final Map<String, dynamic>? initialUser;
   const ProfitlyApp({super.key, this.initialUser});
+
+  @override
+  State<ProfitlyApp> createState() => _ProfitlyAppState();
+}
+
+class _ProfitlyAppState extends State<ProfitlyApp> {
+  @override
+  void initState() {
+    super.initState();
+    themeModeNotifier.addListener(_onThemeChanged);
+  }
+
+  @override
+  void dispose() {
+    themeModeNotifier.removeListener(_onThemeChanged);
+    super.dispose();
+  }
+
+  void _onThemeChanged() => setState(() {});
+
+  ThemeData _buildLightTheme() => ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF1D7A42),
+          primary: const Color(0xFF1D7A42),
+        ),
+        textTheme: GoogleFonts.interTextTheme(),
+        useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF2F5F4),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF1D7A42),
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+      );
+
+  ThemeData _buildDarkTheme() => ThemeData(
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF1D7A42),
+          primary: const Color(0xFF1D7A42),
+          brightness: Brightness.dark,
+        ),
+        textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF166835),
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -45,23 +102,12 @@ class ProfitlyApp extends StatelessWidget {
       locale: context.locale,
       title: 'Profitly',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1D7A42),
-          primary: const Color(0xFF1D7A42),
-        ),
-        textTheme: GoogleFonts.interTextTheme(
-          Theme.of(context).textTheme,
-        ),
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF2F5F4),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF1D7A42),
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
-      ),
-      home: initialUser != null ? MainScreen(user: initialUser) : const LoginScreen(),
+      theme: _buildLightTheme(),
+      darkTheme: _buildDarkTheme(),
+      themeMode: themeModeNotifier.value,
+      home: widget.initialUser != null
+          ? MainScreen(user: widget.initialUser)
+          : const LoginScreen(),
     );
   }
 }
@@ -106,7 +152,7 @@ class _MainScreenState extends State<MainScreen> {
             });
           },
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
           selectedItemColor: const Color(0xFF1D7A42),
           unselectedItemColor: Colors.grey.shade400,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
